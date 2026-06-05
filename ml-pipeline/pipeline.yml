@@ -1,44 +1,9 @@
-name: ML Pipeline
-
-on: [push] 
-
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Train model
-        run: python train.py
-
-      - name: Evaluate model
-        run: python evaluate.py
-
-      - name: Validate accuracy
-        shell: python
-        run: |
-          import os
-          # Lecture du score généré par evaluate.py
-          with open('reports/accuracy_report.txt', 'r') as f:
-              content = f.read()
-              # Extraction du nombre après "accuracy : "
-              accuracy = float(content.split(': ')[1])
-          
-          print(f"Accuracy obtenue : {accuracy}")
-          
-          if accuracy >= 0.90:
-              print("Validation réussie : Score > 0.90")
-          else:
-              print("Validation échouée : Score trop bas")
-              exit(1) # Provoque l'échec du pipeline si le score est trop faible
+steps:
+  - name: install
+    run: pip install -r requirements.txt
+  - name: train
+    run: python train.py
+  - name: evaluate
+    run: python evaluate.py
+  - name: deploy
+    run: python validate_deploy.py
